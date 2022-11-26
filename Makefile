@@ -18,5 +18,5 @@ install:
 	sudo insmod popcorn.ko
 
 purge:
-	sudo rmmod popkorn.ko
+	sudo rmmod popcorn.ko
 	dmesg
