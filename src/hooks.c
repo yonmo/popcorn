@@ -107,8 +107,8 @@ asmlinkage int pn_rmdir(const char __user *pathname) {
 // Define ftrace kernel hooks
 static struct ftrace_hook kernel_hooks[] = {
     // Swap The sys_mkdir call from linux to popcorn method...
-    HOOK("sys_mkdir", pn_mkdir, &lx_mkdir),
-    HOOK("sys_kill", pn_kill, &lx_kill),
-    HOOK("sys_rmdir", pn_rmdir, &lx_rmdir)
+    HOOK("__x64_sys_mkdir", pn_mkdir, &lx_mkdir),
+    HOOK("__x64_sys_kill", pn_kill, &lx_kill),
+    HOOK("__x64_sys_rmdir", pn_rmdir, &lx_rmdir)
 
 };
