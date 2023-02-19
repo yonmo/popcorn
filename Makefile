@@ -1,10 +1,12 @@
 obj-m += popcorn.o
 
-all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+HEADERS= /lib/modules/$(shell uname -r)/build
+
+modules:
+	make -C $(HEADERS) M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C $(HEADERS) M=$(PWD) clean
 
 test:
 	sudo dmesg -C

